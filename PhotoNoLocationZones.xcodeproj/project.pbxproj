@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		64854C392FAC399B00D9D24C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64854C1B2FAC25DD00D9D24C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 64854C222FAC25DD00D9D24C;
+			remoteInfo = PhotoNoLocationZones;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		64854C232FAC25DD00D9D24C /* PhotoNoLocationZones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoNoLocationZones.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		64854C352FAC399B00D9D24C /* PhotoNoLocationZonesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhotoNoLocationZonesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -16,10 +27,22 @@
 			path = PhotoNoLocationZones;
 			sourceTree = "<group>";
 		};
+		64854C362FAC399B00D9D24C /* PhotoNoLocationZonesTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PhotoNoLocationZonesTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		64854C202FAC25DD00D9D24C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64854C322FAC399B00D9D24C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				64854C252FAC25DD00D9D24C /* PhotoNoLocationZones */,
+				64854C362FAC399B00D9D24C /* PhotoNoLocationZonesTests */,
 				64854C242FAC25DD00D9D24C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				64854C232FAC25DD00D9D24C /* PhotoNoLocationZones.app */,
+				64854C352FAC399B00D9D24C /* PhotoNoLocationZonesTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,6 +95,29 @@
 			productReference = 64854C232FAC25DD00D9D24C /* PhotoNoLocationZones.app */;
 			productType = "com.apple.product-type.application";
 		};
+		64854C342FAC399B00D9D24C /* PhotoNoLocationZonesTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 64854C3B2FAC399B00D9D24C /* Build configuration list for PBXNativeTarget "PhotoNoLocationZonesTests" */;
+			buildPhases = (
+				64854C312FAC399B00D9D24C /* Sources */,
+				64854C322FAC399B00D9D24C /* Frameworks */,
+				64854C332FAC399B00D9D24C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				64854C3A2FAC399B00D9D24C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				64854C362FAC399B00D9D24C /* PhotoNoLocationZonesTests */,
+			);
+			name = PhotoNoLocationZonesTests;
+			packageProductDependencies = (
+			);
+			productName = PhotoNoLocationZonesTests;
+			productReference = 64854C352FAC399B00D9D24C /* PhotoNoLocationZonesTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -82,6 +130,10 @@
 				TargetAttributes = {
 					64854C222FAC25DD00D9D24C = {
 						CreatedOnToolsVersion = 26.4.1;
+					};
+					64854C342FAC399B00D9D24C = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 64854C222FAC25DD00D9D24C;
 					};
 				};
 			};
@@ -100,12 +152,20 @@
 			projectRoot = "";
 			targets = (
 				64854C222FAC25DD00D9D24C /* PhotoNoLocationZones */,
+				64854C342FAC399B00D9D24C /* PhotoNoLocationZonesTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		64854C212FAC25DD00D9D24C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64854C332FAC399B00D9D24C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +182,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		64854C312FAC399B00D9D24C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		64854C3A2FAC399B00D9D24C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 64854C222FAC25DD00D9D24C /* PhotoNoLocationZones */;
+			targetProxy = 64854C392FAC399B00D9D24C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		64854C2C2FAC25DE00D9D24C /* Debug */ = {
@@ -260,7 +335,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.4;
@@ -302,7 +377,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.4;
@@ -319,6 +394,53 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Release;
+		};
+		64854C3C2FAC399B00D9D24C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.whitphx.PhotoNoLocationZonesTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotoNoLocationZones.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PhotoNoLocationZones";
+				XROS_DEPLOYMENT_TARGET = 26.4;
+			};
+			name = Debug;
+		};
+		64854C3D2FAC399B00D9D24C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.whitphx.PhotoNoLocationZonesTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotoNoLocationZones.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PhotoNoLocationZones";
+				VALIDATE_PRODUCT = YES;
 				XROS_DEPLOYMENT_TARGET = 26.4;
 			};
 			name = Release;
@@ -340,6 +462,15 @@
 			buildConfigurations = (
 				64854C2F2FAC25DE00D9D24C /* Debug */,
 				64854C302FAC25DE00D9D24C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		64854C3B2FAC399B00D9D24C /* Build configuration list for PBXNativeTarget "PhotoNoLocationZonesTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64854C3C2FAC399B00D9D24C /* Debug */,
+				64854C3D2FAC399B00D9D24C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
