@@ -32,25 +32,14 @@ jobs:
           xcodebuild -version
           swift --version
 
-      - name: Resolve simulator destination
-        id: sim
-        run: |
-          # Pick an available iPhone simulator running the latest installed iOS.
-          DEST=$(xcrun simctl list devices available | awk '
-            /-- iOS / { ios = $0 }
-            /iPhone/ && /\(/ { print ios " :: " $0 }
-          ' | tail -1)
-          echo "Picked: $DEST"
-          NAME=$(echo "$DEST" | sed -E 's/.*:: ([^(]+) \(.*/\1/' | xargs)
-          echo "name=$NAME" >> "$GITHUB_OUTPUT"
-
       - name: Run unit tests
-        env:
-          SIM_NAME: ${{ steps.sim.outputs.name }}
         run: |
+          # Hardcoded simulator name for stability — iPhone 16 is broadly
+          # available across the OS versions GitHub macos-15 runners ship.
+          # OS=latest auto-selects the newest iOS that has this device.
           xcodebuild test \
             -scheme PhotoNoLocationZones \
-            -destination "platform=iOS Simulator,name=${SIM_NAME},OS=latest" \
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=latest" \
             -enableCodeCoverage YES \
             CODE_SIGNING_ALLOWED=NO \
             -resultBundlePath TestResults.xcresult
