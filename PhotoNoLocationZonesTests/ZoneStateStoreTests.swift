@@ -1,32 +1,45 @@
 import XCTest
 @testable import PhotoNoLocationZones
 
-@MainActor
 final class ZoneStateStoreTests: XCTestCase {
 
-    private var defaults: UserDefaults!
-    private var suiteName: String!
+    /// In-memory `KeyValueStore` so tests don't touch the device's shared `UserDefaults`.
+    private final class InMemoryStore: KeyValueStore {
+        private var storage: [String: Any] = [:]
 
-    override func setUp() async throws {
-        suiteName = "ZoneStateStoreTests-\(UUID().uuidString)"
-        defaults = UserDefaults(suiteName: suiteName)
+        func stringArray(forKey key: String) -> [String]? { storage[key] as? [String] }
+        func string(forKey key: String) -> String? { storage[key] as? String }
+        func set(_ value: Any?, forKey key: String) {
+            if let value { storage[key] = value } else { storage.removeValue(forKey: key) }
+        }
+        func removeObject(forKey key: String) { storage.removeValue(forKey: key) }
     }
 
-    override func tearDown() async throws {
-        defaults.removePersistentDomain(forName: suiteName)
-        defaults = nil
-        suiteName = nil
+    private var memoryStore: InMemoryStore!
+
+    override func setUp() {
+        super.setUp()
+        memoryStore = InMemoryStore()
+    }
+
+    override func tearDown() {
+        memoryStore = nil
+        super.tearDown()
+    }
+
+    private func makeStore() -> ZoneStateStore {
+        ZoneStateStore(store: memoryStore)
     }
 
     func test_default_state_is_empty() {
-        let store = ZoneStateStore(defaults: defaults)
+        let store = makeStore()
         XCTAssertTrue(store.activeZoneIds.isEmpty)
         XCTAssertFalse(store.isAnyZoneActive)
         XCTAssertNil(store.lastSeenAssetId)
     }
 
     func test_markEntered_adds_to_active_set() {
-        let store = ZoneStateStore(defaults: defaults)
+        let store = makeStore()
         let a = UUID(), b = UUID()
         store.markEntered([a, b])
         XCTAssertEqual(store.activeZoneIds, [a, b])
@@ -34,7 +47,7 @@ final class ZoneStateStoreTests: XCTestCase {
     }
 
     func test_markEntered_is_idempotent_for_repeated_ids() {
-        let store = ZoneStateStore(defaults: defaults)
+        let store = makeStore()
         let a = UUID()
         store.markEntered([a])
         store.markEntered([a])
@@ -42,7 +55,7 @@ final class ZoneStateStoreTests: XCTestCase {
     }
 
     func test_markExited_removes_from_active_set() {
-        let store = ZoneStateStore(defaults: defaults)
+        let store = makeStore()
         let a = UUID(), b = UUID()
         store.markEntered([a, b])
         store.markExited([a])
@@ -50,7 +63,7 @@ final class ZoneStateStoreTests: XCTestCase {
     }
 
     func test_markExited_for_unknown_id_is_a_noop() {
-        let store = ZoneStateStore(defaults: defaults)
+        let store = makeStore()
         let a = UUID(), unknown = UUID()
         store.markEntered([a])
         store.markExited([unknown])
@@ -58,7 +71,7 @@ final class ZoneStateStoreTests: XCTestCase {
     }
 
     func test_forget_is_an_alias_for_markExited() {
-        let store = ZoneStateStore(defaults: defaults)
+        let store = makeStore()
         let a = UUID(), b = UUID()
         store.markEntered([a, b])
         store.forget([b])
@@ -66,7 +79,7 @@ final class ZoneStateStoreTests: XCTestCase {
     }
 
     func test_clearActiveZones_drops_active_zones_but_preserves_cursor() {
-        let store = ZoneStateStore(defaults: defaults)
+        let store = makeStore()
         store.markEntered([UUID()])
         store.setLastSeenAssetId("photo-1")
         store.clearActiveZones()
@@ -75,27 +88,27 @@ final class ZoneStateStoreTests: XCTestCase {
             "the asset cursor must survive an active-zone clear so catchup doesn't re-scan history")
     }
 
-    func test_state_survives_a_new_store_instance() {
+    func test_state_survives_a_new_store_instance_against_the_same_backing_store() {
         let a = UUID()
         do {
-            let store = ZoneStateStore(defaults: defaults)
+            let store = makeStore()
             store.markEntered([a])
             store.setLastSeenAssetId("abc")
         }
-        let restored = ZoneStateStore(defaults: defaults)
+        let restored = makeStore()
         XCTAssertEqual(restored.activeZoneIds, [a])
         XCTAssertEqual(restored.lastSeenAssetId, "abc")
     }
 
     func test_setLastSeenAssetId_to_nil_clears_the_cursor() {
-        let store = ZoneStateStore(defaults: defaults)
+        let store = makeStore()
         store.setLastSeenAssetId("photo-1")
         store.setLastSeenAssetId(nil)
         XCTAssertNil(store.lastSeenAssetId)
     }
 
     func test_setLastSeenAssetId_overwrites_an_existing_cursor() {
-        let store = ZoneStateStore(defaults: defaults)
+        let store = makeStore()
         store.setLastSeenAssetId("photo-1")
         store.setLastSeenAssetId("photo-2")
         XCTAssertEqual(store.lastSeenAssetId, "photo-2")

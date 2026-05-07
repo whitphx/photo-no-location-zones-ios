@@ -1,30 +1,42 @@
 import Foundation
 
+/// Tiny key-value store protocol that `ZoneStateStore` writes to. `UserDefaults` is the
+/// production implementation; tests inject an in-memory dict-backed store so they don't have
+/// to coordinate suite names or clean up the shared `.standard` defaults.
+protocol KeyValueStore: AnyObject {
+    func stringArray(forKey key: String) -> [String]?
+    func string(forKey key: String) -> String?
+    func set(_ value: Any?, forKey key: String)
+    func removeObject(forKey key: String)
+}
+
+extension UserDefaults: KeyValueStore {
+    func stringArray(forKey key: String) -> [String]? {
+        // UserDefaults exposes `stringArray(forKey:)` natively.
+        return (self.array(forKey: key) as? [String])
+    }
+}
+
 /// Tracks state that must survive process restarts:
 ///  - which zones the user is currently inside (set by geofence transitions)
 ///  - the highest `PHAsset.localIdentifier` we have already inspected
 ///
 /// SPEC.md §H.2: detection on iOS is "catch-up-on-open" — geofence ENTER fires while the app
-/// is in background, the app records "needs catchup since `<lastSeenAssetId>`" durably, and the
-/// next foreground launch (or a Background App Refresh tick) reads that cursor and queries
-/// `PHFetchResult<PHAsset>` for assets created since.
-///
-/// UserDefaults-backed: the data is small (a `Set<UUID>` of zone IDs and one optional `String`
-/// cursor), the access pattern is read-mostly, and the durability requirements match
-/// UserDefaults exactly. SwiftData would be over-engineering at this scale.
-@MainActor
+/// is in background, the app records "needs catchup since `<lastSeenAssetId>`" durably, and
+/// the next foreground launch (or a Background App Refresh tick) reads that cursor and
+/// queries `PHFetchResult<PHAsset>` for assets created since.
 final class ZoneStateStore {
 
-    private let defaults: UserDefaults
+    private let store: KeyValueStore
 
-    init(defaults: UserDefaults = .standard) {
-        self.defaults = defaults
+    init(store: KeyValueStore = UserDefaults.standard) {
+        self.store = store
     }
 
     // MARK: Active zones
 
     var activeZoneIds: Set<UUID> {
-        guard let raw = defaults.array(forKey: Keys.activeZoneIds) as? [String] else { return [] }
+        guard let raw = store.stringArray(forKey: Keys.activeZoneIds) else { return [] }
         return Set(raw.compactMap(UUID.init(uuidString:)))
     }
 
@@ -48,28 +60,28 @@ final class ZoneStateStore {
     /// pieces of state with different lifecycles (the cursor must persist across "I'm now
     /// outside every zone" transitions so we don't refetch already-seen assets).
     func clearActiveZones() {
-        defaults.removeObject(forKey: Keys.activeZoneIds)
+        store.removeObject(forKey: Keys.activeZoneIds)
     }
 
     private func save(activeZoneIds: Set<UUID>) {
         let encoded = activeZoneIds.map(\.uuidString)
-        defaults.set(encoded, forKey: Keys.activeZoneIds)
+        store.set(encoded, forKey: Keys.activeZoneIds)
     }
 
     // MARK: PhotoKit cursor
 
     /// The last `PHAsset.localIdentifier` we have already inspected. The catchup task fetches
-    /// assets created strictly after this point. `nil` means "no cursor yet — first run, or the
-    /// user reset state."
+    /// assets created strictly after this point. `nil` means "no cursor yet — first run, or
+    /// the user reset state."
     var lastSeenAssetId: String? {
-        defaults.string(forKey: Keys.lastSeenAssetId)
+        store.string(forKey: Keys.lastSeenAssetId)
     }
 
     func setLastSeenAssetId(_ id: String?) {
         if let id {
-            defaults.set(id, forKey: Keys.lastSeenAssetId)
+            store.set(id, forKey: Keys.lastSeenAssetId)
         } else {
-            defaults.removeObject(forKey: Keys.lastSeenAssetId)
+            store.removeObject(forKey: Keys.lastSeenAssetId)
         }
     }
 
