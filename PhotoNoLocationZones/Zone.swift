@@ -8,7 +8,13 @@ import Foundation
 /// move persistence to SwiftData when a query layer pays its weight; for now the small
 /// number of zones (≤ 20 on iOS per CoreLocation's `CLCircularRegion` limit, see SPEC.md
 /// §H.3) lives happily as a JSON array.
-struct Zone: Codable, Identifiable, Equatable, Hashable {
+///
+/// `nonisolated` is explicit because the project's `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`
+/// otherwise infers MainActor isolation, which makes the synthesized Codable / Equatable
+/// conformances unusable from non-MainActor test contexts (runtime SIGABRT on
+/// `JSONEncoder.encode`). `Zone` is a value type with no shared mutable state — nonisolated
+/// is the correct choice on the merits.
+nonisolated struct Zone: Codable, Identifiable, Equatable, Hashable, Sendable {
 
     /// Stable across launches; used as the `CLCircularRegion.identifier` so the geofence
     /// callback can map back to a `Zone` row without a separate lookup.

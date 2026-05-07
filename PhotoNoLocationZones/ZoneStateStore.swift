@@ -3,16 +3,15 @@ import Foundation
 /// Tiny key-value store protocol that `ZoneStateStore` writes to. `UserDefaults` is the
 /// production implementation; tests inject an in-memory dict-backed store so they don't have
 /// to coordinate suite names or clean up the shared `.standard` defaults.
-protocol KeyValueStore: AnyObject {
+nonisolated protocol KeyValueStore: AnyObject {
     func stringArray(forKey key: String) -> [String]?
     func string(forKey key: String) -> String?
     func set(_ value: Any?, forKey key: String)
     func removeObject(forKey key: String)
 }
 
-extension UserDefaults: KeyValueStore {
+nonisolated extension UserDefaults: KeyValueStore {
     func stringArray(forKey key: String) -> [String]? {
-        // UserDefaults exposes `stringArray(forKey:)` natively.
         return (self.array(forKey: key) as? [String])
     }
 }
@@ -25,7 +24,11 @@ extension UserDefaults: KeyValueStore {
 /// is in background, the app records "needs catchup since `<lastSeenAssetId>`" durably, and
 /// the next foreground launch (or a Background App Refresh tick) reads that cursor and
 /// queries `PHFetchResult<PHAsset>` for assets created since.
-final class ZoneStateStore {
+///
+/// Marked `nonisolated` because the project's `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`
+/// otherwise infers MainActor isolation, which is undesired for a service that geofence
+/// callbacks (delivered on a background queue) and Background App Refresh tasks need to call.
+nonisolated final class ZoneStateStore {
 
     private let store: KeyValueStore
 
