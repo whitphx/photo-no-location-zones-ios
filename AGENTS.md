@@ -38,6 +38,24 @@ There is **no** equivalent of Android's foreground service that watches the phot
 
 iOS allows 20 active `CLCircularRegion`s per app. The zone editor must enforce this limit (vs Android's 100). For users with more than 20 zones, either reject creation past 20 or implement a "rotating window" strategy that registers the nearest 20 to the user's current coarse location — the latter is a follow-up, not v1.
 
+## Privacy gaps specific to this iOS implementation
+
+These are gaps **beyond** what SPEC.md already documents — they exist on iOS only because the public ImageIO API has no public-API path for selective IFD-tag clearing. Worth knowing before claiming "iOS conforms to SPEC.md §C."
+
+### EXIF / TIFF identity tags are not cleared yet (iOS-only gap)
+
+`ExifGpsStripper` clears **the entire `kCGImagePropertyGPSDictionary`** (SPEC.md §B — fully covered). It does **not** clear the SPEC.md §C identity tags: `MakerNote`, `UserComment`, `CameraOwnerName`, `BodySerialNumber`, `LensSerialNumber` (inside the EXIF IFD), and `Artist`, `ImageDescription` (inside the TIFF IFD).
+
+**Why**: `CGImageDestinationAddImageFromSource`'s properties override merges with — does not replace — the source's sub-dictionaries. `kCFNull` inside a sub-dictionary is silently ignored. The `CGImageDestinationCopyImageSource` + `CGImageMetadata` route operates on the XMP graph, which is a separate view from the IFD properties. There's no public ImageIO path to remove a single IFD sub-dictionary key without re-encoding the image (lossy for JPEG).
+
+**Impact**:
+- `MakerNote` is the meaningful exposure. *On Android-shot or DSLR-imported photos* it commonly embeds a duplicate of the GPS coordinates in proprietary format — a photo taken on an Android phone, transferred to an iPhone, then processed through this app would still leak its capture address. *On iPhone-native stock-Camera photos* Apple's MakerNote mostly carries an `AssetIdentifier` (Live Photo grouping) — identity correlation, not direct location.
+- The other identity tags are typically empty on iPhone-native stock-Camera output but get populated by Lightroom imports, professional cameras, and some Android modes.
+
+**Follow-up to close the gap**: a JPEG APP1 / IFD walker analogous to `Mp4Atoms` — walk the JPEG marker stream, locate the EXIF APP1 segment (marker `FFE1`, payload starts with `Exif\0\0`), walk the IFD0 / EXIF-IFD entries, and zero specific tag IDs in place without re-encoding the image data. Same algorithmic shape as the MP4 atom rewriter; same byte-layout-preserving guarantee. When this lands, update `ExifGpsStripper` to call into it before the PhotoKit-mediated write, add tests for each §C tag, and bump SPEC.md to a minor version that records the iOS gap as closed.
+
+Until then: SPEC.md §B is met; SPEC.md §C is partially met (Android: full; iOS: documented gap pending the APP1 walker).
+
 ## Conventions
 
 - **No SwiftPM workspace yet.** Single Xcode app target + a Unit Testing Bundle target. Add SwiftPM only when an external dep makes sense.
