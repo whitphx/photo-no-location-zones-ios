@@ -34,13 +34,16 @@ jobs:
 
       - name: Run unit tests
         run: |
-          # `OS=latest` is unreliable with `name=` matching; let xcodebuild
-          # pick the OS for us by giving it just the device name. iPhone 16
-          # is broadly available across the OS versions GitHub macos-15
-          # runners ship today.
+          # Hardcoded simulator name — periodically needs updating as Apple
+          # rotates the device family. As of 2026-05 the macos-15 runner has
+          # iPhone 17 / 17 Pro / 17 Pro Max / 17e / Air; the prior image had
+          # iPhone 16 which is no longer present. If this step starts failing
+          # with "Unable to find a device matching the provided destination
+          # specifier", check `xcrun simctl list devices available` on a fresh
+          # macos-15 runner and pick a name from the iPhone family.
           xcodebuild test \
             -scheme PhotoNoLocationZones \
-            -destination "platform=iOS Simulator,name=iPhone 16" \
+            -destination "platform=iOS Simulator,name=iPhone 17" \
             -enableCodeCoverage YES \
             CODE_SIGNING_ALLOWED=NO \
             -resultBundlePath TestResults.xcresult
